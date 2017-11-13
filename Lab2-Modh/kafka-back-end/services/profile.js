@@ -1,4 +1,4 @@
-var mongo = require("./mongo");
+var mongo = require("./mongoConnPool");
 var mongoURL = "mongodb://localhost:27017/dropbox";
 var mongodb = require('mongodb');
 
@@ -7,7 +7,7 @@ function handle_request(msg, callback) {
 
     if (msg.hasOwnProperty('firstname')) {
 
-        mongo.connect(mongoURL, function () {
+        //mongo.connect(mongoURL, function () {
             console.log('Connected to mongo at: ' + mongoURL);
             var coll = mongo.collection('users');
             var id = new mongodb.ObjectID(msg.userid);
@@ -40,11 +40,11 @@ function handle_request(msg, callback) {
 
             });
 
-        });
+      //  });
     }
 
     else{
-        mongo.connect(mongoURL, function() {
+       // mongo.connect(mongoURL, function() {
             console.log('Connected to mongo at: ' + mongoURL);
             var coll = mongo.collection('users');
 
@@ -70,7 +70,7 @@ function handle_request(msg, callback) {
 
 
             })
-    })
+    //})
     }
 
 

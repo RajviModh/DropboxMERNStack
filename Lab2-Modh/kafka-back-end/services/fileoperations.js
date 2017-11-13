@@ -3,7 +3,7 @@ var mime = require('mime');
 var path = require('path');
 var mkdirp = require('mkdirp');
 
-var mongo = require("./mongo");
+var mongo = require("./mongoConnPool");
 var mongoURL = "mongodb://localhost:27017/dropbox";
 var nodemailer = require('nodemailer');
 
@@ -52,7 +52,7 @@ function handle_request(msg, callback) {
 
         console.log("In Makedirectory of fileoperations" + msg.name, msg.path);
         createDirectory(msg.path + '/' + msg.name, function () {
-            mongo.connect(mongoURL, function () {
+            //mongo.connect(mongoURL, function () {
                 console.log('Connected to mongo at: ' + mongoURL);
                 var coll = mongo.collection('activity');
 
@@ -72,13 +72,13 @@ function handle_request(msg, callback) {
                     callback(null, res);
                 });
             });
-        });
+        //});
     }
     else if (msg.hasOwnProperty('deleteDirectory')) {
 
         console.log("------In deletedirectory of fileoperations" + msg.dirName+"------"+ msg.path);
         deleteDirectory(msg.filepath, msg.userid, function () {
-            mongo.connect(mongoURL, function () {
+          //  mongo.connect(mongoURL, function () {
                 console.log('Connected to mongo at: ' + mongoURL);
                 var coll = mongo.collection('activity');
 
@@ -98,13 +98,13 @@ function handle_request(msg, callback) {
                     callback(null, res);
                 });
             });
-        })
+       // })
     }
 
     else if (msg.hasOwnProperty('star')) {
         console.log("++++++++++++++in Star of fileoperations of Kafka" + msg.fileName +"----------" + msg.isStar +"------" +msg.userId);
 
-        mongo.connect(mongoURL, function () {
+       // mongo.connect(mongoURL, function () {
 
             console.log('Connected to mongo at: ' + mongoURL);
             var coll = mongo.collection('starFiles');
@@ -140,11 +140,11 @@ function handle_request(msg, callback) {
                // callback(null, res);
 
             })
-        })
+       // })
     }
 
     else if (msg.hasOwnProperty('unstar')) {
-        mongo.connect(mongoURL, function () {
+        //mongo.connect(mongoURL, function () {
 
             console.log('Connected to mongo at: ' + mongoURL);
             var coll = mongo.collection('starFiles');
@@ -166,11 +166,11 @@ function handle_request(msg, callback) {
                 callback(null, res);
             });
 
-        })
+        //})
     }
 
     else if (msg.hasOwnProperty('getStarredfiles')) {
-        mongo.connect(mongoURL, function () {
+        //mongo.connect(mongoURL, function () {
             var coll = mongo.collection('starFiles');
             console.log("In getStarred userid :" +msg.userid);
 
@@ -183,7 +183,7 @@ function handle_request(msg, callback) {
                 }
                 callback(null, res);
             });
-        });
+        //});
     }
 
     else if (msg.hasOwnProperty('getSharedFiles')) {

@@ -54,7 +54,7 @@ class Signup extends Component {
         return (
             <div className="row justify-content-md-center">
                 <div className="col-md-12">
-                    <img src={logo} height="60" width="180"/>
+                    <img src={logo} height="80" width="300"/>
                     <hr/>
                 </div>
                 <div className="row">

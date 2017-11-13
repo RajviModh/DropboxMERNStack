@@ -1,13 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var fs = require('fs');
-var mkdirp = require('mkdirp');
-var path = './public/uploads';
-var files = require('./files');
-
-var mongo = require("./mongo");
-var mongoURL = "mongodb://localhost:27017/dropbox";
-var mongodb = require('mongodb');
 var kafka = require('./kafka/client');
 
 

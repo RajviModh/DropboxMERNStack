@@ -1,4 +1,4 @@
-var mongo = require("./mongo");
+var mongo = require("./mongoConnPool");
 var mongoURL = "mongodb://localhost:27017/dropbox";
 var mongodb = require('mongodb');
 
@@ -7,7 +7,7 @@ function handle_request(msg, callback) {
 
     console.log("*****Hi from kafka user activity ");
 
-    mongo.connect(mongoURL, function () {
+    //mongo.connect(mongoURL, function () {
         console.log('Connected to mongo at: ' + mongoURL);
         var coll = mongo.collection('activity');
 
@@ -22,6 +22,6 @@ function handle_request(msg, callback) {
             callback(null, res);
         });
 
-    })
+   // })
 }
 exports.handle_request = handle_request;

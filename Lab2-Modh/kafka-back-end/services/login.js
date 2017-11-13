@@ -1,4 +1,4 @@
-var mongo = require("./mongo");
+var mongo = require("./mongoConnPool");
 var mongoURL = "mongodb://localhost:27017/dropbox";
 var bcrypt = require("bcrypt");
 var mkdirp = require('mkdirp');
@@ -9,7 +9,7 @@ function handle_request(msg, callback){
     var res = {};
     if(msg.hasOwnProperty('fname')) {
         console.log("in signup of kafka back-end");
-        mongo.connect(mongoURL, function() {
+        //mongo.connect(mongoURL, function() {
             var salt = bcrypt.genSaltSync(10);
             var newPass = bcrypt.hashSync(msg.pass, salt);
 
@@ -32,12 +32,13 @@ function handle_request(msg, callback){
 
             })
 
-        })
+        //})
     }
     else{
 
         var res = {};
-        mongo.connect(mongoURL, function () {
+        console.log("in login of kafka");
+         //mongo.connect(mongoURL, function () {
             var coll = mongo.collection('users');
             coll.findOne({email: msg.username}, function (err, user) {
                 if (user) {
@@ -57,7 +58,7 @@ function handle_request(msg, callback){
 
             });
 
-        })
+       // })
     }
 }
 
