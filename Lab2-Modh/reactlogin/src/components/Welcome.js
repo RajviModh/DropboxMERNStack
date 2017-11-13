@@ -31,22 +31,22 @@ class Welcome extends Component {
 
     state = {
         username : '',
-        directoryName : '',
-        lastModifiedDate:'',
-        size:'',
-        type:'',
-        filename :'',
-        data_uri:'',
-        filelist:[],
-        pathTrack:[],
-        isSelfCall:false,
         root:'',
         userId:'',
         rootDir:'',
+        size:'',
+        type:'',
+        filename :'',
         userActivityList:[],
         starredlist:[],
         isStarFlag:'',
         recipientEmail:'',
+        directoryName : '',
+        lastModifiedDate:'',
+        data_uri:'',
+        filearray:[],
+        path1:[],
+        isSelfCall:false,
         showModal: false
     };
 
@@ -60,49 +60,19 @@ class Welcome extends Component {
             root:root,
             userid:userid
         });
-        this.getChildDir(root);
+        this.getDirectories(root);
         this.getStarredFiles(userid);
         document.title = `Welcome, ${this.state.username} !!`;
     }
-
-    close = () => {
-        alert("in modal close");
-        this.setState({ showModal: false });
-    };
-    open = () => {
-        alert("in modal open");
-        this.setState({ showModal: true });
-    };
-
-    getBack = () =>{
-        debugger;
-        if(this.state.pathTrack.length>1){
-            this.getChildDir(this.state.pathTrack[this.state.pathTrack.length-2]);
-            this.state.pathTrack.splice(this.state.pathTrack.length-2, 2);
-        }else{
-            this.getChildDir(this.state.root);
-            this.state.pathTrack.splice(this.state.pathTrack.length-1, 1);
-        }
-
-    };
 
     handleFileUpload = (event) => {
 
         const payload = new FormData();
 
-        var pathToUpload = "";
-        if(this.state.pathTrack.length>0){
-            pathToUpload = (this.state.pathTrack[this.state.pathTrack.length-1]);
-        }else{
-            pathToUpload = (this.state.root);
-        }
-        //alert("in handlefileupload pathtoupload" + pathToUpload);
-
-
+        var userid = localStorage.getItem("userid");
         payload.append('mypic', this.refs.mypic.files[0]);
-        payload.append('userid',localStorage.getItem("userid"));
-        //payload.append('userid',localStorage.getItem("userid"));
-        //alert("in handlefileupload payload : " + JSON.stringify(payload));
+        payload.append('userid',userid);
+
         API.doUpload(payload)
             .then((res) => {
                 if (res.status === '501') {
@@ -112,21 +82,32 @@ class Welcome extends Component {
 
                 }
                 else{
-                    this.getChildDir(pathToUpload);
+                    this.getDirectories(userid);
                 }
             });
     };
-
-    createDirectory= (dirname) =>{
-        var pathToUpload = "";
-        if(this.state.pathTrack.length>0){
-            pathToUpload = (this.state.pathTrack[this.state.pathTrack.length-1]);
+    goBack = () =>{
+        debugger;
+        if(this.state.path1.length>1){
+            this.getDirectories(this.state.path1[this.state.path1.length-2]);
+            this.state.path1.splice(this.state.path1.length-2, 2);
         }else{
-            pathToUpload = (this.state.root);
+            this.getDirectories(this.state.root);
+            this.state.path1.splice(this.state.path1.length-1, 1);
         }
-        var data = {'dirName':dirname, 'path': pathToUpload};
-        console.log("create directory data " +JSON.stringify(data));
-        API.doMakedirectory(data)
+
+    };
+    createDirectory= (name) =>{
+        var path = "";
+        if(this.state.path1.length>0){
+            path = (this.state.path1[this.state.path1.length-1]);
+        }else{
+            path = (this.state.root);
+        }
+        var payload = {'name':name, 'path': path};
+        alert("in create dir : "+JSON.stringify(payload));
+        console.log("create directory data " +JSON.stringify(payload));
+        API.doMakedirectory(payload)
             .then((res) => {
                 if (res.status === '501') {
                     localStorage.removeItem("token");
@@ -134,22 +115,19 @@ class Welcome extends Component {
                     this.props.history.push('/login');
 
                 }else{
-                    this.getChildDir(pathToUpload);
+                    this.getDirectories(path);
                 }
             });
     };
 
-    getChildDir= (filepath) =>{
-        console.log('data = '+filepath);
-        var data = {'dir':filepath};
-        //alert("Inside getChildDir : " +JSON.stringify(data));
-        API.getChildDirs(data)
+    getDirectories= (path) =>{
+        var payload = {'root':path};
+        API.getDirectories(payload)
             .then((res) => {
-            //alert("After getchilddir : " + JSON.stringify(res));
                 if (res.status === '201') {
-                    this.state.pathTrack.push(filepath);
+                    this.state.path1.push(path);
                     this.setState({
-                        filelist: res.filelist,
+                        filearray: res.filearray,
                         isSelfCall: true
                     });
                 }else if(res.status==='501'){
@@ -158,16 +136,16 @@ class Welcome extends Component {
                 }
             })
     };
-    deleteDirectory= (filename) =>{
-        var pathToUpload = "";
-        if(this.state.pathTrack.length>0){
-            pathToUpload = (this.state.pathTrack[this.state.pathTrack.length-1]);
+    deleteDirectory= (name) =>{
+        var path = "";
+        if(this.state.path1.length>0){
+            path = (this.state.path1[this.state.path1.length-1]);
         }else{
-            pathToUpload = (this.state.root);
+            path = (this.state.root);
         }
-        var data = {'dirName':filename, 'path': pathToUpload};
+        var payload = {'name':name, 'path': path};
         //alert("delete directory data " +JSON.stringify(data));
-        API.deleteDirectory(data)
+        API.deleteDirectory(payload)
             .then((res) => {
                 if (res.status === '501') {
                     localStorage.removeItem("token");
@@ -175,28 +153,10 @@ class Welcome extends Component {
                     this.props.history.push('/login');
 
                 }else{
-                    this.getChildDir(pathToUpload);
+                    this.getDirectories(path);
                 }
             });
     };
-
-/*   handleUserActivity=(data)=>{
-        var userid = localStorage.getItem("userid");
-        alert("in handleactivity" + userid);
-        API.dohandleUserActivity(data)
-            .then((res) =>{
-            if(res.status === '201'){
-                alert("Response in welcome " + JSON.stringify(res));
-                this.setState({
-                    //userActivityList: res.userActivityList
-                });
-            }
-            else if(res.status ==='501'){
-                localStorage.removeItem("token");
-                localStorage.removeItem("root");
-            }
-            });
-    };*/
 
 
    download= (filepath,filename) =>{
@@ -211,11 +171,10 @@ class Welcome extends Component {
             })
     };
 
-    starFile=(filename)=>{
-        //alert(filename);
+    dostarFile=(filename)=>{
         var userid = localStorage.getItem("userid");
-        var data = {'fileName':filename,'isStar':true, 'userid' :userid};
-        API.doStarFiles(data)
+        var payload = {'fileName':filename,'isStar':true, 'userid' :userid};
+        API.doStarFiles(payload)
             .then((status) => {
                 alert(JSON.stringify("Star files welcome" + JSON.stringify(status)));
                 if (status.status === '501') {
@@ -224,16 +183,14 @@ class Welcome extends Component {
                     this.setState({
                         starFileName: status,
                     });
-
-                    //alert(JSON.stringify(this.state));
                 }
 
             });
     };
 
-    unStarFile=(filename)=>{
-        var data = {'fileName':filename, 'isStar':false};
-        API.doUnStarFiles(data)
+    dounStarFile=(filename)=>{
+        var payload = {'fileName':filename, 'isStar':false};
+        API.doUnStarFiles(payload)
             .then((status) => {
                 alert("welcome unstar file " +JSON.stringify(status));
                 if (status.status === '200') {
@@ -245,10 +202,8 @@ class Welcome extends Component {
     };
 
     getStarredFiles=(userid)=>{
-        var data={'userid':userid};
-        //alert("in get starred files"+data);
-       // var userid = localStorage.getItem("userid");
-        API.getStarredFiles(data)
+        var payload={'userid':userid};
+        API.getStarredFiles(payload)
             .then((res)=>{
                 alert(JSON.stringify(JSON.stringify(res)));
                 if (res.status === '200') {
@@ -263,9 +218,9 @@ class Welcome extends Component {
     };
 
     shareFile=(filepath,filename,recipientEmail)=>{
-        var data = {'path':filepath,'name':filename, 'recipientEmail':recipientEmail};
-        alert("in sharefile" +JSON.stringify(data));
-        API.doShareFiles(data)
+        var payload = {'path':filepath,'name':filename, 'recipientEmail':recipientEmail};
+        alert("in sharefile" +JSON.stringify(payload));
+        API.doShareFiles(payload)
             .then((res) => {
                 alert(JSON.stringify(res));
                 if (res.status === '200') {
@@ -279,13 +234,12 @@ class Welcome extends Component {
     render(){
 
         debugger;
-        var filelist1 = [];
-        if(this.state.filelist && this.state.filelist!=''){
-            filelist1 = this.state.filelist;
+        var filearray1 = [];
+        if(this.state.filearray && this.state.filearray!=''){
+            filearray1 = this.state.filearray;
         }
         var username = this.state.userid;
 
-       //var starList=this.state.starredlist;
 
 
         return(
@@ -307,12 +261,12 @@ class Welcome extends Component {
                     <h4>Home</h4>
                     <hr/>
 
-                    <button className="btn btn-primary" onClick={() => this.getBack()}>
+                    <button className="btn btn-primary" onClick={() => this.goBack()}>
                         back
                     </button>
                     &nbsp; &nbsp;
                     <input placeholder="Enter Directory Name"  type='text' onChange={(event) => {
-                        const value=event.target.value
+                        const value=event.target.value;
                         this.setState({
                             filename: event.target.value
                         });
@@ -347,7 +301,7 @@ class Welcome extends Component {
                                 (   <div>
 
                                             <td> {files.filename} </td>
-                                            <td><input type="checkbox" name="files" onClick={() => this.unStarFile(files.filename)}/></td>
+                                            <td><input type="checkbox" name="files" onClick={() => this.dounStarFile(files.filename)}/></td>
 
                                     </div>
                                 )}</tr>
@@ -361,11 +315,11 @@ class Welcome extends Component {
                         <h4 style={{color:"grey"}}>Recent</h4>
                         <table style={tablestyle}>
 
-                                {filelist1.map((file, i) =>
+                                {filearray1.map((file, i) =>
                                     <tr key={i} >
                                         <td>
                                         {file.isFolder==true ?
-                                            (<button onClick={() => this.getChildDir(file.path)}>
+                                            (<button onClick={() => this.getDirectories(file.path)}>
                                                 {file.name}
                                             </button>)
                                             :
@@ -375,8 +329,7 @@ class Welcome extends Component {
                                         </td>
                                         &nbsp; &nbsp;
 
-                                        {/*<a href={'http://localhost:3001/uploads/'+file.path} download={file.name}>Download</a>*/}
-                                        <td><input type="checkbox" name="files" onClick={() => this.starFile(file.name)}/>Star</td>
+                                        <td><input type="checkbox" name="files" onClick={() => this.dostarFile(file.name)}/>Star</td>
                                         <td>
 
                                         </td><td><button className="btn btn-primary" onClick={()=>this.shareFile(file.path,file.name,this.state.recipientEmail)}>Share</button>
@@ -403,7 +356,7 @@ class Welcome extends Component {
                                         </Modal>
 */}
 
-                                            {/*<button className="btn btn-primary" onClick={() => this.shareFile(file.path,file.name,this.state.recipientEmail)}>Share</button>*/}
+
 
                                         </td>
 
@@ -439,7 +392,6 @@ class Welcome extends Component {
                         </div>
                         <div style={upload}>
                             <input
-                                className={'fileupload'}
                                 type="file"
                                 ref="mypic"
                                 name="mypic"
@@ -462,10 +414,6 @@ class Welcome extends Component {
                     </div>
 
                     </div>
-
-                        {/*<ImageGridList images={this.state.images}/>*/}
-
-
                 </div>
             </div>
 

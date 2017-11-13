@@ -1,15 +1,4 @@
-var express = require('express');
-var router = express.Router();
-var fs = require('fs');
-
-var files = require('./files');
-
-var mongo = require("./mongo");
-var mongoURL = "mongodb://localhost:27017/dropbox";
-var LocalStrategy = require("passport-local").Strategy;
 var kafka = require('./kafka/client');
-var mkdirp = require('mkdirp');
-//var file = '../kafka-back-end/public/uploads'
 var path = './public/uploads';
 
 var doSignUp = function(req,res) {

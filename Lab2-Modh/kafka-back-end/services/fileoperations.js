@@ -38,7 +38,6 @@ var deleteFolders = function(path,userid) {
 
 var deleteDirectory = function(filepath,userid,callback){
 
-    console.log("in deletedirectory 2 of kafka : "+filepath+"-----"+ userid);
     if(fs.statSync('./public/uploads'+'/'+filepath).isDirectory()){
         deleteFolders('./public/uploads'+'/'+filepath,userid);
     }else{
@@ -49,10 +48,10 @@ var deleteDirectory = function(filepath,userid,callback){
 
 function handle_request(msg, callback) {
     var res = {};
-    if (msg.hasOwnProperty('makedir')) {
+    if (msg.hasOwnProperty('makeDirectory')) {
 
-        console.log("In Makedirectory of fileoperations" + msg.dirName, msg.path);
-        createDirectory(msg.path + '/' + msg.dirName, function () {
+        console.log("In Makedirectory of fileoperations" + msg.name, msg.path);
+        createDirectory(msg.path + '/' + msg.name, function () {
             mongo.connect(mongoURL, function () {
                 console.log('Connected to mongo at: ' + mongoURL);
                 var coll = mongo.collection('activity');
@@ -75,7 +74,7 @@ function handle_request(msg, callback) {
             });
         });
     }
-    else if (msg.hasOwnProperty('deletedir')) {
+    else if (msg.hasOwnProperty('deleteDirectory')) {
 
         console.log("------In deletedirectory of fileoperations" + msg.dirName+"------"+ msg.path);
         deleteDirectory(msg.filepath, msg.userid, function () {

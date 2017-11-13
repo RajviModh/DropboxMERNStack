@@ -28,8 +28,6 @@ var upload = multer({storage:storage});
 router.post('/file', upload.single('mypic'), function (req, res, next) {
 
     console.log("in upload files : " +req);
-   // fs.createReadStream('./public/uploads/temp'+'/'+path).pipe(fs.createWriteStream('./public/uploads/'+req.body.path+'/'+path));
-    //fs.unlinkSync('./public/uploads/temp/'+path);
 
     res.status(201).json({status:'201'});
 

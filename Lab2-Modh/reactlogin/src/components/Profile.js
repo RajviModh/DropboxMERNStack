@@ -26,9 +26,9 @@ class Profile extends  Component{
 
     };
 
-    showProfile=(data)=>{
-       //alert("showProfile data : " + JSON.stringify(data));
-        API.dohandleShowProfile(data)
+    getProfile=(data)=>{
+       //alert("getProfile data : " + JSON.stringify(data));
+        API.getProfile(data)
             .then((res) => {
             alert("in react show profile : " + JSON.stringify(res));
                 if (res.status === '201') {
@@ -54,7 +54,7 @@ class Profile extends  Component{
     componentWillMount(){
         var uid = localStorage.getItem("userid");
         console.log("Userid in profile" +uid);
-        this.showProfile(this.state);
+        this.getProfile(this.state);
         /*this.setState({
             fname: '',
             lname: '',

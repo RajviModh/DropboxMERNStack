@@ -61,15 +61,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', index);
-//app.use('/users', users);
-
 app.post('/file', file);
 
-app.post('/getDir', listdirectory.listdir);
-//app.get('/getDir', listdirectory.listdir);
-app.post('/makeDir',fileoperations.makeDir);
-app.post('/deleteDir',fileoperations.deleteDir);
+app.post('/getDirectories', listdirectory.listDirectory);
+app.post('/makeDirectory',fileoperations.makeDirectory);
+app.post('/deleteDirectory',fileoperations.deleteDirectory);
 app.post('/download', fileoperations.downloadFile);
 app.post('/doStar',fileoperations.doStar);
 app.post('/doUnStar',fileoperations.doUnStar);
@@ -78,11 +74,8 @@ app.post('/getSharedFiles',fileoperations.getSharedFiles);
 
 app.post('/getUserActivity',userActivity.getUserActivity);
 app.post('/profile',profile.profile);
-app.post('/showProfile',profile.showProfile);
+app.post('/getProfile',profile.getProfile);
 
-
-//app.post('/makeDirectory',fileoperations.authenticate,fileoperations.makeDirectory);
-//app.post('/deleteDir',fileoperations.authenticate,fileoperations.deleteDir);
 
 
 app.post('/login',function(req, res,next) {

@@ -63,7 +63,7 @@ export const doUpload = (payload) => {
 };
 export const doMakedirectory = (payload) => {
 
-    return fetch(`${api}/makeDir`, {
+    return fetch(`${api}/makeDirectory`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -82,7 +82,7 @@ export const doMakedirectory = (payload) => {
         });
 };
 export const deleteDirectory = (payload) => {
-    return fetch(`${api}/deleteDir`, {
+    return fetch(`${api}/deleteDirectory`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -142,8 +142,8 @@ export const dohandleProfile = (payload) => {
         });
 };
 
-export const dohandleShowProfile = (payload) => {
-    return fetch(`${api}/showProfile`, {
+export const getProfile = (payload) => {
+    return fetch(`${api}/getProfile`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -268,16 +268,10 @@ export const logout = () =>
             console.log("This is error");
             return error;
         });
-/*export const getImages = () =>
-    fetch(`${api}/files/files/`)
-        .then(res => res.json())
-        .catch(error => {
-            console.log("This is error.");
-            return error;
-        });*/
-export const getChildDirs =(payload) =>
 
-    fetch(`${api}/getDir`, {
+export const getDirectories =(payload) =>
+
+    fetch(`${api}/getDirectories`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -287,7 +281,6 @@ export const getChildDirs =(payload) =>
     }).then(res => res.json())
         .then(res =>{
             debugger;
-            console.log("in api getchilddirs : " +JSON.stringify(res));
             return res;
         })
         .catch(error => {
@@ -295,16 +288,3 @@ export const getChildDirs =(payload) =>
             return error;
         });
 
-
-/*
-export const deleteIt = (param) =>
-    fetch(`${api}/deleteIt?fileName=`+param, {
-        method: 'DELETE'
-    }).then(res => {
-        console.log(res);
-        return res.status;
-    })
-        .catch(error => {
-            console.log("This is error");
-            return error;
-        });*/

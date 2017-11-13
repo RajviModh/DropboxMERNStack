@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
-var glob = require('glob');
-//var fs = require('fs');
-//var filepath = './public/uploads';
-//var fileoperations = require('./fileoperations');
 
 
 var path = "";
@@ -12,7 +8,6 @@ var path = "";
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
 
-        console.log("##############usname"+ req.headers.userid);
         path=req.headers.userid;
         cb(null, '../kafka-back-end/public/uploads'+'/'+path);
     },

@@ -45,7 +45,7 @@ var profile = function (req,res,next) {
 };
 
 
-var showProfile = function(req, res){
+var getProfile = function(req, res){
 
     console.log("@@@@@@@@@@ hi from show profile : " +req.body.userid);
     kafka.make_request('profile_topic', {"userid": req.body.userid}, function (err, results) {
@@ -66,4 +66,4 @@ var showProfile = function(req, res){
 };
 
 exports.profile=profile;
-exports.showProfile=showProfile;
+exports.getProfile=getProfile;

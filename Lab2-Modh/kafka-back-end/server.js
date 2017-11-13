@@ -34,8 +34,7 @@ consumer.on('message', function (message) {
 
     if(data.data.hasOwnProperty("root"))
     {
-        console.log("ListDir File");
-        listdirectory.listdir(data.data, function(err,res){
+        listdirectory.listDirectory(data.data, function(err,res){
             console.log('after handle'+JSON.stringify(res));
             var payloads = [
                 { topic: data.replyTo,
